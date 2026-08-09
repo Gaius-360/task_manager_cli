@@ -54,6 +54,9 @@ class App {
     } on InvalidTaskDataException catch (e) {
       stderr.writeln(e.message);
       exitCode = 1;
+    } on StorageException catch (e) {
+      stderr.writeln(e.message);
+      exitCode = 1;
     }
   }
 
@@ -195,10 +198,14 @@ class App {
       if (arg.startsWith('--')) {
         final body = arg.substring(2);
         final eqIndex = body.indexOf('=');
+        final name = eqIndex == -1 ? body : body.substring(0, eqIndex);
+        if (name.isEmpty) {
+          throw InvalidTaskDataException('Option invalide: "$arg"');
+        }
         if (eqIndex == -1) {
-          flags.add(body);
+          flags.add(name);
         } else {
-          named[body.substring(0, eqIndex)] = body.substring(eqIndex + 1);
+          named[name] = body.substring(eqIndex + 1);
         }
       } else {
         positional.add(arg);

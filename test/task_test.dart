@@ -64,6 +64,26 @@ void main() {
     );
   });
 
+  test('fromJson throws InvalidTaskDataException for malformed data', () {
+    expect(
+      () => Task.fromJson({'type': 'simple', 'title': 'x'}),
+      throwsA(isA<InvalidTaskDataException>()),
+    );
+  });
+
+  test('fromJson throws InvalidTaskDataException for an unknown priority', () {
+    expect(
+      () => Task.fromJson({
+        'type': 'simple',
+        'title': 'x',
+        'priority': 'urgentissime',
+        'deadline': null,
+        'isDone': false,
+      }),
+      throwsA(isA<InvalidTaskDataException>()),
+    );
+  });
+
   test('compareTo orders by priority, highest first', () {
     final low = SimpleTask(title: 'Basse', priority: Priority.low);
     final high = SimpleTask(title: 'Haute', priority: Priority.high);

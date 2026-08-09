@@ -20,21 +20,21 @@ void main() {
 
   test('starts empty when no file exists', () async {
     await repository.load();
-    expect(repository.tasks, isEmpty);
+    expect(repository.items, isEmpty);
   });
 
   test('add appends a task', () {
     repository.add(
       SimpleTask(title: 'Nouvelle tâche', priority: Priority.medium),
     );
-    expect(repository.tasks, hasLength(1));
+    expect(repository.items, hasLength(1));
   });
 
   test('complete marks a task as done', () {
     repository.add(SimpleTask(title: 'Tâche', priority: Priority.medium));
     final task = repository.complete(0);
     expect(task.isDone, true);
-    expect(repository.tasks.first.isDone, true);
+    expect(repository.items.first.isDone, true);
   });
 
   test('complete throws for an invalid index', () {
@@ -49,8 +49,8 @@ void main() {
     repository.add(SimpleTask(title: 'B', priority: Priority.low));
     final removed = repository.removeAt(0);
     expect(removed.title, 'A');
-    expect(repository.tasks, hasLength(1));
-    expect(repository.tasks.first.title, 'B');
+    expect(repository.items, hasLength(1));
+    expect(repository.items.first.title, 'B');
   });
 
   test('list filters by completion state and priority', () {
@@ -119,8 +119,13 @@ void main() {
     final reloaded = TaskRepository(storagePath);
     await reloaded.load();
 
-    expect(reloaded.tasks, hasLength(2));
-    expect(reloaded.tasks[0].title, 'Persistée');
-    expect(reloaded.tasks[1], isA<UrgentTask>());
+    expect(reloaded.items, hasLength(2));
+    expect(reloaded.items[0].title, 'Persistée');
+    expect(reloaded.items[1], isA<UrgentTask>());
+  });
+
+  test('load throws a StorageException for corrupted JSON', () async {
+    await File(storagePath).writeAsString('{not valid json');
+    await expectLater(repository.load(), throwsA(isA<StorageException>()));
   });
 }

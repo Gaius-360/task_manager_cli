@@ -21,3 +21,11 @@ class InvalidTaskDataException implements Exception {
   @override
   String toString() => 'InvalidTaskDataException: $message';
 }
+
+class StorageException implements Exception {
+  final String message;
+  StorageException(this.message);
+
+  @override
+  String toString() => 'StorageException: $message';
+}

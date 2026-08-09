@@ -23,19 +23,29 @@ class Repository<T> {
     final file = File(storagePath);
     if (!await file.exists()) return;
 
-    final content = await file.readAsString();
-    if (content.trim().isEmpty) return;
+    try {
+      final content = await file.readAsString();
+      if (content.trim().isEmpty) return;
 
-    final decoded = jsonDecode(content) as List<dynamic>;
-    _items
-      ..clear()
-      ..addAll(decoded.map((e) => fromJson(e as Map<String, dynamic>)));
+      final decoded = jsonDecode(content) as List<dynamic>;
+      _items
+        ..clear()
+        ..addAll(decoded.map((e) => fromJson(e as Map<String, dynamic>)));
+    } on FileSystemException catch (e) {
+      throw StorageException('Impossible de lire $storagePath: ${e.message}');
+    } on FormatException catch (e) {
+      throw StorageException('Fichier de données corrompu ($storagePath): $e');
+    }
   }
 
   Future<void> save() async {
-    final file = File(storagePath);
-    final encoded = jsonEncode(_items.map(toJson).toList());
-    await file.writeAsString(encoded);
+    try {
+      final file = File(storagePath);
+      final encoded = jsonEncode(_items.map(toJson).toList());
+      await file.writeAsString(encoded);
+    } on FileSystemException catch (e) {
+      throw StorageException('Impossible d\'écrire $storagePath: ${e.message}');
+    }
   }
 
   void add(T item) {
@@ -66,8 +76,6 @@ class TaskRepository extends Repository<Task> {
         toJson: (task) => task.toJson(),
         fromJson: Task.fromJson,
       );
-
-  List<Task> get tasks => items;
 
   Task complete(int index) {
     final task = itemAt(index);

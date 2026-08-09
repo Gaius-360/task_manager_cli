@@ -30,11 +30,23 @@ abstract class Task implements Comparable<Task> {
   }
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    final title = json['title'] as String;
-    final priority = Priority.values.byName(json['priority'] as String);
-    final deadlineStr = json['deadline'] as String?;
-    final deadline = deadlineStr != null ? DateTime.parse(deadlineStr) : null;
-    final isDone = json['isDone'] as bool;
+    final String title;
+    final Priority priority;
+    final DateTime? deadline;
+    final bool isDone;
+    try {
+      title = json['title'] as String;
+      priority = Priority.values.byName(json['priority'] as String);
+      final deadlineStr = json['deadline'] as String?;
+      deadline = deadlineStr != null ? DateTime.parse(deadlineStr) : null;
+      isDone = json['isDone'] as bool;
+    } on TypeError catch (e) {
+      throw InvalidTaskDataException('Données de tâche invalides: $e');
+    } on ArgumentError catch (e) {
+      throw InvalidTaskDataException('Priorité invalide dans les données: $e');
+    } on FormatException catch (e) {
+      throw InvalidTaskDataException('Date invalide dans les données: $e');
+    }
 
     switch (json['type']) {
       case 'simple':

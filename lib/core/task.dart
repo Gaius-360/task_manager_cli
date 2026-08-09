@@ -1,4 +1,4 @@
-import 'package:task_manager_cli/exceptions.dart';
+import 'package:task_manager_cli/core/exceptions.dart';
 
 enum Priority { low, medium, high }
 

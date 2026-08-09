@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:task_manager_cli/exceptions.dart';
-import 'package:task_manager_cli/repository.dart';
-import 'package:task_manager_cli/task.dart';
+import 'package:task_manager_cli/core/exceptions.dart';
+import 'package:task_manager_cli/core/task.dart';
+import 'package:task_manager_cli/data/repository.dart';
 
 class App {
   final TaskRepository repository;

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:task_manager_cli/exceptions.dart';
-import 'package:task_manager_cli/task.dart';
+import 'package:task_manager_cli/core/exceptions.dart';
+import 'package:task_manager_cli/core/task.dart';
 
 /// Generic, file-backed repository for storing a list of items of type [T].
 class Repository<T> {

@@ -38,17 +38,25 @@ depuis lequel la commande est lancée (un fichier différent par dossier).
 
 ## Architecture
 
-- [`lib/task.dart`](lib/task.dart) — `Task` (classe abstraite, implémente `Comparable<Task>`
-  pour le tri par priorité), et ses deux sous-classes `SimpleTask` et `UrgentTask`.
-- [`lib/repository.dart`](lib/repository.dart) — `Repository<T>`, un dépôt générique
-  fichier/JSON (chargement, sauvegarde, ajout, suppression par index). `TaskRepository`
-  en hérite et lui injecte la sérialisation de `Task` via son constructeur, plus la
-  logique métier propre aux tâches (complétion, filtrage, tri).
-- [`lib/app.dart`](lib/app.dart) — `App`, la couche CLI : analyse manuelle des
-  arguments, dispatch vers le dépôt, formatage de la sortie.
-- [`lib/exceptions.dart`](lib/exceptions.dart) — exceptions métier
-  (`ItemNotFoundException`, `InvalidPriorityException`, `InvalidTaskDataException`,
-  `StorageException`) levées en cas d'entrée ou de données invalides.
+Le code de `lib/` est organisé en trois couches :
+
+- [`lib/core/`](lib/core) — modèle métier, indépendant de toute I/O.
+  - `task.dart` — `Task` (classe abstraite, implémente `Comparable<Task>` pour le
+    tri par priorité), et ses deux sous-classes `SimpleTask` et `UrgentTask`.
+  - `exceptions.dart` — exceptions métier (`ItemNotFoundException`,
+    `InvalidPriorityException`, `InvalidTaskDataException`, `StorageException`)
+    levées en cas d'entrée ou de données invalides.
+- [`lib/data/`](lib/data) — accès aux données.
+  - `repository.dart` — `Repository<T>`, un dépôt générique fichier/JSON
+    (chargement, sauvegarde, ajout, suppression par index). `TaskRepository` en
+    hérite et lui injecte la sérialisation de `Task` via son constructeur, plus la
+    logique métier propre aux tâches (complétion, filtrage, tri).
+- [`lib/presentation/`](lib/presentation) — interface utilisateur.
+  - `app.dart` — `App`, la couche CLI : analyse manuelle des arguments, dispatch
+    vers le dépôt, formatage de la sortie.
+
+[`lib/task_manager_cli.dart`](lib/task_manager_cli.dart) réexporte ces trois
+couches en une seule bibliothèque, importée par `bin/` et les tests.
 
 ## Tests
 
